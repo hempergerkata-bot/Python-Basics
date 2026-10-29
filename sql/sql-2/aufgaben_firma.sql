@@ -28,11 +28,19 @@
 --   status (Text bis 10 Zeichen, Standardwert 'geplant').
 -- Prüfen mit: .schema projekt
 
-
+CREATE TABLE projekt (
+    id INTEGER PRIMARY KEY,
+    titel VARCHAR(40) NOT NULL,
+    abteilung_id INTEGER NOT NULL,
+    budget INTEGER CHECK (budget >= 0),
+    status VARCHAR(10) DEFAULT 'geplant',
+    FOREIGN KEY (abteilung_id) REFERENCES abteilung(id)
+);
 
 -- Aufgabe 2 (ALTER)
 -- Die Tabelle mitarbeiter bekommt eine Spalte telefon (Text bis 20 Zeichen).
-
+ALTER TABLE mitarbeiter
+ADD COLUMN telefon VARCHAR(20);
 
 
 -- ===================================================================== DML
@@ -42,11 +50,19 @@
 --   2 'Messeauftritt'   -> Marketing, Budget  8000
 --   3 'Recruiting-Tag'  -> HR,        Budget  3000
 -- Erwartet: SELECT * FROM projekt;  -> 3 Zeilen, status überall 'geplant'
+INSERT INTO projekt (titel, abteilung_id, budget)
+VALUES
+('Neues Intranet', 1, 20000),
+('Messeauftritt', 4, 8000),
+('Recruiting-Tag', 2, 3000);
 
 
 
 -- Aufgabe 4 (UPDATE)
 -- Anna (id 1) bekommt die Telefonnummer '0351 1234-11'.
+UPDATE mitarbeiter
+SET telefon = '0351 1234-11'
+WHERE id = 1;
 
 
 
@@ -55,7 +71,9 @@
 -- Erwartet: 2 Zeilen geändert - Dirk 3200, Hakan 4000 (Felix in Leipzig bleibt 2900)
 
 
-
+UPDATE mitarbeiter
+SET gehalt = gehalt + 100
+WHERE abteilung_id = 3 AND standort = 'Dresden';
 -- Aufgabe 6 (DELETE)
 -- Der Recruiting-Tag fällt aus. Löschen Sie das Projekt.
 -- Erwartet: SELECT COUNT(*) FROM projekt;  -> 2
